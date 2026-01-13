@@ -149,3 +149,5 @@ C:\Users\RTX MSI\Reactivities\API\obj\Debug\net10.0\refint\API.dll
 C:\Users\RTX MSI\Reactivities\API\obj\Debug\net10.0\API.pdb
 C:\Users\RTX MSI\Reactivities\API\obj\Debug\net10.0\API.genruntimeconfig.cache
 C:\Users\RTX MSI\Reactivities\API\obj\Debug\net10.0\ref\API.dll
+C:\Users\RTX MSI\Reactivities\API\obj\Debug\net10.0\API.sourcelink.json
+C:\Users\RTX MSI\Reactivities\api\bin\Debug\net10.0\package-lock.json
