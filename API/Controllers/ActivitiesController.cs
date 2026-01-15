@@ -1,24 +1,30 @@
 using System;
+using Application.Activities.Commands;
+using Application.Activities.Queries;
+using Application.Activities.Queries.GetActivityDetail;
 using Domain; // Assuming your Activity entity is in this namespace
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
+
 
 namespace API.Controllers;
 
-public class ActivitiesController(AppDbContext context) : BaseApiController
+public class ActivitiesController : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<List<Activity>>> GetActivities()
     {
-        // Fixed the typo: .Activities instead of .Activitires
-        return await context.Activities.ToListAsync();
+        
+        return await Mediator.Send(new GetActivityList.Query());
     }
     [HttpGet("{id}")]
     public async Task<ActionResult<Activity>> GetActivityDetail(string id)
     {
-        var activity = await context.Activities.FindAsync(id);
-        if (activity == null) return NotFound();
-        return activity;
+        return await Mediator.Send(new GetActivityDetail.Query { Id = id });
+    }
+    [HttpPost]
+    public async Task<ActionResult<string>> CreateActivity(Activity activity)
+    {
+       return await Mediator.Send(new CreateActivity.Command { Activity = activity });
     }
 }
