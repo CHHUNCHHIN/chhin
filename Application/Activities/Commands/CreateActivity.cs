@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Domain;
+using Persistence;
 
 namespace Application.Activities.Commands;
 
@@ -12,13 +13,14 @@ public class CreateActivity
     }
 
     // ✅ Use your actual DbContext name (example: ApplicationDbContext)
-   public class Handler(DbContext context) : IRequestHandler<Command, string>
+   // Ensure it uses AppDbContext, not DbContext
+public class Handler(AppDbContext context) : IRequestHandler<Command, string>
+{
+    public async Task<string> Handle(Command request, CancellationToken cancellationToken)
     {
-        public async Task<string> Handle(Command request, CancellationToken ct)
-        {
-            context.Set<Activity>().Add(request.Activity);
-            await context.SaveChangesAsync(ct);
-            return request.Activity.Id;
-        }
+        context.Activities.Add(request.Activity);
+        await context.SaveChangesAsync();
+        return request.Activity.Id;
     }
+}
 }

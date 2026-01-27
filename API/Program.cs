@@ -1,48 +1,45 @@
 using Application.Activities.Queries;
-using Microsoft.AspNetCore.Identity;
+using Application.Core;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Add services
+// 1. Services
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddCors();
-builder.Services.AddMediatR(x => 
-        x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>());
 
-// ✅ Configure named CORS policy
+builder.Services.AddMediatR(x => 
+    x.RegisterServicesFromAssemblyContaining<GetActivityList.Handler>());
+    
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ClientApp", policy =>
     {
-        policy.WithOrigins("https://localhost:3000") // 🔒 Use HTTPS!
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .WithOrigins("http://localhost:3000", "https://localhost:3000"); 
     });
 });
 
 var app = builder.Build();
 
-// 2. Configure the HTTP request pipeline
+// 2. Middleware Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
 
-// ✅ Middleware order is CRITICAL
-app.UseRouting();                      // ← Required for CORS + controllers
-app.UseCors("ClientApp");             // ← After UseRouting, before UseAuthorization
-// app.UseAuthentication();           // ← Uncomment if using auth
-// app.UseAuthorization(); 
-           
-
-
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseCors("ClientApp");
 app.MapControllers();
 
 // 3. Database Migration & Seeding
