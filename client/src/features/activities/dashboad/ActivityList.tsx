@@ -3,13 +3,20 @@ import ActivityCard from "./ActivityCard";
 import type { Activity } from "../../../lib/type/index.t";
 
 type Props = {
-    activities:Activity [];
+    activity:Activity []
+    selectActivity : (id: string) => void;
+    deleteActivity : (id: string) => void;
 }
-export default function ActivityList({activities}:Props) {
+export default function ActivityList({activity, selectActivity, deleteActivity}:Props) {
   return (
     <Box sx={{display: 'flex', flexDirection: 'column', gap: 3}}>
-        {activities.map(Activity => (
-            <ActivityCard key={Activity.id} activities={Activity} />
+        {activity.map(Activity => (
+            <ActivityCard
+             key={Activity.id}
+              activity={Activity}
+               selectActivity={selectActivity}
+               deleteActivity={deleteActivity}
+         />
        ))}
     </Box>
   )
